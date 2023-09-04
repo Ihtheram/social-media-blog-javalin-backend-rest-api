@@ -59,18 +59,20 @@ public class MessageDAO {
         return null;
     }
 
+
+
     /**
      * @param message_id Message ID.
      * @return messages identified by Message ID.
      */
-    public List<Message> getAllMessagesByMessageId(int message_id){
+    public List<Message> getAllMessagesForUser(int account_id){
         Connection connection = ConnectionUtil.getConnection();
         List<Message> messages = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM message WHERE message_id = ?";
+            String sql = "SELECT * FROM message WHERE posted_by = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            preparedStatement.setInt(1, message_id);
+            preparedStatement.setInt(1, account_id);
 
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){

@@ -31,26 +31,23 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
 
         app.get("/messages", this::getAllMessagesHandler);
-        app.get("/accounts/{account_id}/messages", this::getAllMessagesByMessageIdHandler);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesForUserHandler);
+        //app.get("/accounts/messages/{message_id}", this::getMessageByMessageIdHandler);
         app.post("/messages", this::postMessageHandler);
         
         return app;
     }
 
-    /**
-     * @param context
-     */
+
     private void getAllMessagesHandler(Context context) {
         context.json(messageService.getAllMessages());
     }
 
-    /**
-     * @param context
-     */
-    private void getAllMessagesByMessageIdHandler(Context context) {
-        int message_id = Integer.parseInt(context.pathParam("account_id"));
-        context.json(messageService.getAllMessagesByMessageId(message_id));
+    private void getAllMessagesForUserHandler(Context context) {
+        int account_id = Integer.parseInt(context.pathParam("account_id"));
+        context.json(messageService.getAllMessagesForUser(account_id));
     }
+
 
 
     private void postMessageHandler(Context context) throws JsonProcessingException {
