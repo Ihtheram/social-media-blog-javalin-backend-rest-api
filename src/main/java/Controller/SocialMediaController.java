@@ -27,10 +27,12 @@ public class SocialMediaController {
      * @return a Javalin app object which defines the behavior of the Javalin controller.
      */
     public Javalin startAPI() {
-        
+
         Javalin app = Javalin.create();
 
         app.get("/messages", this::getAllMessagesHandler);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesByMessageIdHandler);
+        app.post("/messages", this::postMessageHandler);
         
         return app;
     }
@@ -41,5 +43,27 @@ public class SocialMediaController {
     private void getAllMessagesHandler(Context context) {
         context.json(messageService.getAllMessages());
     }
+
+    /**
+     * @param context
+     */
+    private void getAllMessagesByMessageIdHandler(Context context) {
+        int message_id = Integer.parseInt(context.pathParam("account_id"));
+        context.json(messageService.getAllMessagesByMessageId(message_id));
+    }
+
+
+    private void postMessageHandler(Context context) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(context.body(), Message.class);
+        Message addedMessage = messageService.addMessage(message);
+        if(addedMessage!=null){
+            context.json(mapper.writeValueAsString(addedMessage));
+        }else{
+            context.status(400);
+        }
+    }
+
+
 
 }
