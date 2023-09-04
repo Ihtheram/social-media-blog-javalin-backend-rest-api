@@ -5,6 +5,7 @@ import Model.Message;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ public class MessageDAO {
     public Message getMessageByMessageId(int message_id){
         Connection connection = ConnectionUtil.getConnection();
         try {
-            //Write SQL logic here
             String sql = "SELECT * FROM message WHERE message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
@@ -60,11 +60,6 @@ public class MessageDAO {
     }
 
 
-
-    /**
-     * @param message_id Message ID.
-     * @return messages identified by Message ID.
-     */
     public List<Message> getAllMessagesForUser(int account_id){
         Connection connection = ConnectionUtil.getConnection();
         List<Message> messages = new ArrayList<>();
@@ -91,16 +86,58 @@ public class MessageDAO {
 
     public Message insertMessage(Message message){
         Connection connection = ConnectionUtil.getConnection();
+        /* Retrieving from database if there is any matching account ID */
+            
         try {
-            //Write SQL logic here
-            String sql = "INSERT INTO message(posted_by, message_text) VALUES (?, ?)" ;
+            String sql1 = "SELECT account_id FROM account WHERE account_id = ?";
+            PreparedStatement ps1 = connection.prepareStatement(sql1);
+            ps1.setInt(1, message.getPosted_by());
+            ResultSet rs1 = ps1.executeQuery();
+            int userId = rs1.getInt("account_id");
+            
+            
+            /**if the message_text is not blank,
+             * is under 255 characters,
+             * and posted_by refers to a real, existing user
+             */
+            if(message.getMessage_text()!=null && message.getMessage_text().length()<=255 && userId>=0 && userId==message.getPosted_by()){
+                
+                
+                String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?)" ;
+                PreparedStatement preparedStatement = connection.prepareStatement(sql,  Statement.RETURN_GENERATED_KEYS);
+
+                preparedStatement.setInt(1, message.getPosted_by());
+                preparedStatement.setString(2, message.getMessage_text());
+                preparedStatement.setLong(3, message.getTime_posted_epoch());
+            
+                preparedStatement.executeUpdate();
+
+                ResultSet rs = preparedStatement.getGeneratedKeys();
+                if(rs.next()){
+                    int message_id = (int) rs.getInt("message_id");
+                    return new Message(message_id, message.getPosted_by(), message.getMessage_text(), message.getTime_posted_epoch());
+                }
+            }
+        }catch(SQLException e){
+            System.out.println(e.getMessage());           
+        }
+        return null;
+    }
+
+    public Message deleteMessage(int message_id){
+        
+        Message toDelete = getMessageByMessageId(message_id);
+        
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "DELETE FROM message WHERE message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            preparedStatement.setInt(1, message.getPosted_by());
-            preparedStatement.setString(2, message.getMessage_text());
-            
+            preparedStatement.setInt(1, message_id);
             preparedStatement.executeUpdate();
-            return message;
+
+            return toDelete;
+
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }

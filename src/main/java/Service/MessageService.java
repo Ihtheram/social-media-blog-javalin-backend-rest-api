@@ -37,9 +37,11 @@ public class MessageService {
     }
 
     public Message addMessage(Message message) {
-        if(message.equals(messageDAO.getMessageByMessageId(message.getMessage_id()))){
-            return null;
-        };
         return messageDAO.insertMessage(message);
     }
+
+    public Message deleteMessage(int message_id){
+        return messageDAO.deleteMessage(message_id);
+    }
+
 }
