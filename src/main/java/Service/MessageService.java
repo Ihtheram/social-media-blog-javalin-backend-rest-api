@@ -44,4 +44,7 @@ public class MessageService {
         return messageDAO.deleteMessage(message_id);
     }
 
+    public Message updateMessage(int message_id, Message message){
+        return messageDAO.updateMessage(message_id, message);
+    }
 }

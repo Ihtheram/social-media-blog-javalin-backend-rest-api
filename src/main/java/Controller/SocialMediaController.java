@@ -6,6 +6,8 @@ import io.javalin.http.Context;
 import Model.Message;
 import Service.MessageService;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,6 +36,7 @@ public class SocialMediaController {
         app.get("/accounts/{account_id}/messages", this::getAllMessagesForUserHandler);
         app.get("/messages/{message_id}", this::getMessageByMessageIdHandler);
         app.post("/messages", this::postMessageHandler);
+        app.patch("/messages/{message_id}", this::updateMessageHandler);
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
             
         return app;
@@ -62,16 +65,31 @@ public class SocialMediaController {
 
 
     private void postMessageHandler(Context context) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
         
-        Message message = mapper.readValue(context.body(), Message.class);
+        Message message = objectMapper.readValue(context.body(), Message.class);
         Message addedMessage = messageService.addMessage(message);
         
         if(addedMessage!=null){
-            context.json(mapper.writeValueAsString(addedMessage));
+            context.json(objectMapper.writeValueAsString(addedMessage));
         }else{
             context.status(400);
         }
+    }
+
+    private void updateMessageHandler(Context context) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Message message = objectMapper.readValue(context.body(), Message.class);
+        int message_id = Integer.parseInt(context.pathParam("message_id"));
+        
+        Message updatedMessage = messageService.updateMessage(message_id, message);
+        if(updatedMessage==null){
+            context.status(400);
+        }
+        else{
+            context.json(objectMapper.writeValueAsString(updatedMessage));
+        }
+        
     }
 
     private void deleteMessageHandler(Context context) {

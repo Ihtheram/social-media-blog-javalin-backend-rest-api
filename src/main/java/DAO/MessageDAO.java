@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mockito.internal.matchers.Null;
+
 public class MessageDAO {
 
 
@@ -144,6 +146,31 @@ public class MessageDAO {
         return null;
     }
 
+    public Message updateMessage(int message_id, Message message){
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            Message currentMsg = getMessageByMessageId(message_id);
 
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, message.getMessage_text());
+            preparedStatement.setInt(2, message_id);
+            
+            /*
+             * Check if-
+             * the message id already exists,
+             * the new message_text is not blank,
+             * message_text is not over 255 characters
+             */
+            if(currentMsg!=null && message.message_text.length()>0 && message.message_text.length()<255){
+                preparedStatement.executeUpdate();
+                return getMessageByMessageId(message_id);
+            }
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
     
 }
