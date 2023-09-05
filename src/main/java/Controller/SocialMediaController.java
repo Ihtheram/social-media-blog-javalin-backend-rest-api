@@ -97,8 +97,6 @@ public class SocialMediaController {
         context.json(messageService.getAllMessagesForUser(account_id));
     }
 
-
-
     private void postMessageHandler(Context context) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectMapper writeobjectMapper = new ObjectMapper();

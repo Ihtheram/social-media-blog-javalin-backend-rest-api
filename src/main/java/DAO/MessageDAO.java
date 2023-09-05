@@ -84,9 +84,43 @@ public class MessageDAO {
         return messages;
     }
 
-    public Message insertMessage(Message message){
+
+    public Message insertMessage(Message message) {
         Connection connection = ConnectionUtil.getConnection();
-        /* Retrieving from database if there is any matching account ID */
+        try {
+            String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?);";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            preparedStatement.setInt(1, message.getPosted_by());
+            preparedStatement.setString(2, message.getMessage_text());
+            preparedStatement.setLong(3, message.getTime_posted_epoch());
+
+            /*
+             * CHECK IF
+             * message_text is not blank,
+             * message_text is under 255 characters,
+             */
+            if (message.getMessage_text().length()>0 && message.getMessage_text().length()<255)
+                preparedStatement.executeUpdate();
+            ResultSet ResultSetwPKey = preparedStatement.getGeneratedKeys();
+            if(ResultSetwPKey.next()){
+                int message_id = (int) ResultSetwPKey.getInt(1);
+                return new Message(message_id, message.getPosted_by(), message.getMessage_text(), message.getTime_posted_epoch());
+            }
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+
+
+
+ /*   public Message insertMessage(Message message){
+        
+        Connection connection = ConnectionUtil.getConnection();
+        Retrieving from database if there is any matching account ID
             
         try {
             String sql1 = "SELECT account_id FROM account WHERE account_id = ?";
@@ -105,11 +139,12 @@ public class MessageDAO {
             preparedStatement.setString(2, message.getMessage_text());
             preparedStatement.setLong(3, message.getTime_posted_epoch());
             
-            /**check if
+            **
+             * check if
              * message_text is not blank,
              * message_text is under 255 characters,
              * posted_by refers to existing user
-             */     
+               
             if (message.getMessage_text().length()>0 && message.getMessage_text().length()<255 && userId>=0
                     && userId==message.getPosted_by()) {
                 preparedStatement.executeUpdate();
@@ -123,6 +158,7 @@ public class MessageDAO {
         }
         return null;
     }
+    */
 
     public Message deleteMessage(int message_id){
         
