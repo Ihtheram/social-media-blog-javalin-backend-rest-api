@@ -16,9 +16,15 @@ public class AccountService {
         this.accountDAO = accountDAO;
     }
 
-
+    /**
+     * methods
+     */
     public Account login(Account credentials){
         return accountDAO.login(credentials);
     }
-    
+
+    public Account register(Account credentials){
+        return accountDAO.register(credentials);
+    }
+
 }

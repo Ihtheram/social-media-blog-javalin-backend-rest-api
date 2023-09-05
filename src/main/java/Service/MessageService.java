@@ -15,6 +15,7 @@ public class MessageService {
         messageDAO = new MessageDAO();
     }
     /**
+     * one arg constructor
      * @param messageDAO
      */
     public MessageService(MessageDAO messageDAO){

@@ -11,8 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mockito.internal.matchers.Null;
-
 public class MessageDAO {
 
 
@@ -98,28 +96,28 @@ public class MessageDAO {
             int userId = rs1.getInt("account_id");
             
             
-            /**if the message_text is not blank,
-             * is under 255 characters,
-             * and posted_by refers to a real, existing user
-             */
-            if(message.getMessage_text()!=null && message.getMessage_text().length()<=255 && userId>=0 && userId==message.getPosted_by()){
-                
-                
-                String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?)" ;
-                PreparedStatement preparedStatement = connection.prepareStatement(sql,  Statement.RETURN_GENERATED_KEYS);
+         
+           
+            String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-                preparedStatement.setInt(1, message.getPosted_by());
-                preparedStatement.setString(2, message.getMessage_text());
-                preparedStatement.setLong(3, message.getTime_posted_epoch());
+            preparedStatement.setInt(1, message.getPosted_by());
+            preparedStatement.setString(2, message.getMessage_text());
+            preparedStatement.setLong(3, message.getTime_posted_epoch());
             
+            /**check if
+             * message_text is not blank,
+             * message_text is under 255 characters,
+             * posted_by refers to existing user
+             */     
+            if (message.getMessage_text().length()>0 && message.getMessage_text().length()<255 && userId>=0
+                    && userId==message.getPosted_by()) {
                 preparedStatement.executeUpdate();
 
                 ResultSet rs = preparedStatement.getGeneratedKeys();
-                if(rs.next()){
-                    int message_id = (int) rs.getInt("message_id");
-                    return new Message(message_id, message.getPosted_by(), message.getMessage_text(), message.getTime_posted_epoch());
-                }
+                return getMessageByMessageId((int) rs.getInt("message_id"));
             }
+            
         }catch(SQLException e){
             System.out.println(e.getMessage());           
         }
