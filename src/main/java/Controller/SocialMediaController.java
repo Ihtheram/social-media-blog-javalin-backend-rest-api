@@ -3,10 +3,10 @@ package Controller;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
+import Model.Account;
 import Model.Message;
+import Service.AccountService;
 import Service.MessageService;
-
-import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,10 +18,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
+    AccountService accountService;
     MessageService messageService;
 
     public SocialMediaController(){
         messageService = new MessageService();
+        accountService = new AccountService();
     }
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
@@ -32,6 +34,7 @@ public class SocialMediaController {
 
         Javalin app = Javalin.create();
 
+        app.post("/login", this::loginHandler);
         app.get("/messages", this::getAllMessagesHandler);
         app.get("/accounts/{account_id}/messages", this::getAllMessagesForUserHandler);
         app.get("/messages/{message_id}", this::getMessageByMessageIdHandler);
@@ -42,6 +45,20 @@ public class SocialMediaController {
         return app;
     }
 
+    private void loginHandler(Context context) throws JsonProcessingException{
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Account account = objectMapper.readValue(context.body(), Account.class);
+
+        Account login = accountService.login(account);
+        if(login==null){
+            context.status(401);
+        }
+        else{
+            context.json(objectMapper.writeValueAsString(login));
+        }
+         
+    }
 
     private void getAllMessagesHandler(Context context) {
         context.json(messageService.getAllMessages());
