@@ -6,6 +6,40 @@ When building a full-stack application, we're typically concerned with both a fr
 
 This project will be a backend for a hypothetical social media app, where we must manage our users’ accounts as well as any messages that they submit to the application. The application will function as a micro-blogging or messaging app. In our hypothetical application, any user should be able to see all of the messages posted to the site, or they can see the messages posted by a particular user. In either case, we require a backend which is able to deliver the data needed to display this information as well as process actions like logins, registrations, message creations, message updates, and message deletions.
 
+## List of Features Implemented
+- User Registration
+- User Login
+- Create a new message
+- Retrieve all messages
+- Retrieve a message by message ID
+- Delete a message by message ID
+- Update a message by message ID
+- Retrieve all messages of a user by user ID
+
+## Technologies used
+- Java
+- Javalin
+- JDBC
+
+## How to set up / get started using it
+- Download repository
+- Unzip
+- Open with an IDE
+- Install required dependencies
+- Run tests
+- Run on an experimental server or deploy
+- Use the defined endpoints to see the API work
+
+## Usage of the project
+Any user can see all messages, retrieve a particular message by its ID or its author's ID, update or delete a message by its ID,
+as well as register a new account or log into an existing account.
+
+## Contributors
+- Ihtheram
+- jhigherevature
+- kevinchilds
+- tedbeast
+
 ## Database Tables 
 
 These will be provided in a sql script, and a ConnectionUtil class that will run the sql script is provided:
