@@ -7,14 +7,14 @@ When building a full-stack application, we're typically concerned with both a fr
 This project will be a backend for a hypothetical social media app, where we must manage our users’ accounts as well as any messages that they submit to the application. The application will function as a micro-blogging or messaging app. In our hypothetical application, any user should be able to see all of the messages posted to the site, or they can see the messages posted by a particular user. In either case, we require a backend which is able to deliver the data needed to display this information as well as process actions like logins, registrations, message creations, message updates, and message deletions.
 
 ## List of Features Implemented
-- User Registration
-- User Login
-- Create a new message
-- Retrieve all messages
-- Retrieve a message by message ID
-- Delete a message by message ID
-- Update a message by message ID
-- Retrieve all messages of a user by user ID
+- User Registration                           - endpoint POST localhost:8080/register
+- User Login                                  - endpoint POST localhost:8080/login
+- Create a new message                        - endpoint POST localhost:8080/messages
+- Retrieve all messages                       - endpoint GET localhost:8080/messages
+- Retrieve a message by message ID            - endpoint GET localhost:8080/messages/{message_id}
+- Delete a message by message ID              - endpoint DELETE localhost:8080/messages/{message_id}
+- Update a message by message ID              - endpoint PATCH localhost:8080/messages/{message_id}
+- Retrieve all messages of a user by user ID  - endpoint GET localhost:8080/accounts/{account_id}/messages
 
 ## Technologies used
 - Java
