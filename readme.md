@@ -40,6 +40,11 @@ as well as register a new account or log into an existing account.
 - kevinchilds
 - tedbeast
 
+## License Information
+GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 
+https://github.com/Ihtheram/Ihtheram-Social-Media-Blog-API/blob/master/LICENSE
+
+
 ## Database Tables 
 
 These will be provided in a sql script, and a ConnectionUtil class that will run the sql script is provided:
